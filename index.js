@@ -1,4 +1,5 @@
 import { Client, Intents } from 'discord.js';
+import { REST } from '@discordjs/rest';
 import { config, process } from 'dotenv';
 import fs from 'fs';
 
@@ -14,11 +15,11 @@ let bot = new Client(
 );
 
 //register commands
-bot.commands = new Map();
+const commands = []
 fs.readdirSync('./commands').forEach(file => {
     if (!file.endsWith('.js')) return;
     const command = require(`./commands/${file}`);
-    bot.commands.set(command.name, command);
+    commands.push(command);
 });
 
 //register events
@@ -29,7 +30,22 @@ fs.readdirSync('./events').forEach(file => {
     bot.on(eventName, (msg) => event.run(bot, msg));
 });
 
+const rest = new REST({version: '9'}).setToken(process.env.TOKEN);
 
+(async () => {
+	try {
+		console.log('Started refreshing application (/) commands.');
+
+		await rest.put(
+			Routes.applicationGuildCommands(clientId, guildId),
+			{ body: commands },
+		);
+
+		console.log('Successfully reloaded application (/) commands.');
+	} catch (error) {
+		console.error(error);
+	}
+})();
 
 //login
 bot.login(process.env.TOKEN);

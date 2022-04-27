@@ -15,6 +15,6 @@ const announce = new SlashCommandBuilder()
     }
 );
 
-const rawData = announce.toJSON();
+const announceData = announce.toJSON();
 export default announce;
-export { rawData };
+export { announceData };
