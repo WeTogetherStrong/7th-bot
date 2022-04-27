@@ -10,6 +10,7 @@ const punish = new SlashCommandBuilder()
     .addTextOption(option => option.setName('time').setDescription(`The time for the punishment`).setRequired(false))
     .setDescription('Punsishes a user')
     .setExecutor(async (message, args) => {
+        if (guild.member(message.members.first()).hasPermission('MANAGE_MEMBERS')) {
         var row = new MessageActionRow()
             .addComponents(
                 [
